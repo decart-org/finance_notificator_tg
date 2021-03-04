@@ -9,6 +9,10 @@ import database
 logging.basicConfig(level=logging.DEBUG)
 bot = telebot.TeleBot(config.token, threaded=False)
 
+#munu
+menu = types.InlineKeyboardMarkup()
+menu.row(types.InlineKeyboardButton(text='Статистика за інші дні', url='https://analytics.decart.space/stat_admin.php'))
+
 @bot.message_handler(commands=['start'])
 def start_message(message):
     bot.send_message(message.chat.id, message.chat.id)
@@ -18,6 +22,7 @@ def main():
         today = datetime.now().date()
         time_now = datetime.now().time().hour
         check_insert_today_date = database.select_database_date(today)
+        list_send_user = [604377972, 391851986, 329710371, 49286688]
 
         if int(time_now) == 20 and check_insert_today_date is None: #додати перевірку на відправлене повідомлення в цей день
             #data
@@ -33,11 +38,12 @@ def main():
             
             message_all_data = '*Загальний звіт за ' + str(datetime.now().date()) + '*\n\n\n' + \
                 'Оборот DecArt: {0}\nОборот Firini: {1}\n\nСередній чек DecArt: {2}\nСередній чек Firini: {3}'.format(
-                    decart_total_sum, firini_total_sum, firini_s_check, decart_s_check)
+                    int(decart_total_sum), int(firini_total_sum), int(firini_s_check), int(decart_s_check))
 
             message_to_manager = '*Звіт по менеджерах за '  + str(datetime.now().date()) + '*\n\n\n*DecArt*\n'
 
-            bot.send_message(604377972, message_all_data, parse_mode='Markdown')
+            for users in list_send_user:
+                bot.send_message(users, message_all_data, parse_mode='Markdown', reply_markup=menu)
 
             #=============================================================
             #Отримуємо дані по менеджерах
@@ -54,8 +60,8 @@ def main():
 
                     #Додаємо в повідомлення
                     message_to_manager += '*' + str(manager_original_name) + '*\n' +  \
-                        'Сума замовлень: ' + str(manager_total_sum) + '\nКількість замовлень: ' + str(manager_count_order) + \
-                            '\nСередній чек: ' + str(manager_s_check) + '\n\n'
+                        'Сума замовлень: ' + str(int(manager_total_sum)) + '\nКількість замовлень: ' + str(manager_count_order) + \
+                            '\nСередній чек: ' + str(int(manager_s_check)) + '\n\n'
                 except:
                     continue
 
@@ -70,12 +76,13 @@ def main():
 
                     #Додаємо в повідомлення
                     message_to_manager += '*' + str(manager_original_name) + '*\n' +  \
-                        'Сума замовлень: ' + str(manager_total_sum) + '\nКількість замовлень: ' + str(manager_count_order) + \
-                            '\nСередній чек: ' + str(manager_s_check) + '\n\n'
+                        'Сума замовлень: ' + str(int(manager_total_sum)) + '\nКількість замовлень: ' + str(manager_count_order) + \
+                            '\nСередній чек: ' + str(int(manager_s_check)) + '\n\n'
                 except:
                     continue
             
-            bot.send_message(604377972, message_to_manager, parse_mode='Markdown')
+            for user in list_send_user:
+                bot.send_message(user, message_to_manager, parse_mode='Markdown', reply_markup=menu)
             database.insert_date_notification()
         else:
             time.sleep(10)
