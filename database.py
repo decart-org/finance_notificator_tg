@@ -50,6 +50,7 @@ def get_manager_total_sum(manager):
 
 def get_manager_count_order(manager):
     sql = 'SELECT COUNT(total_sum) FROM manager_web_history WHERE DATE = \'' + str(datetime.now().date()) + '\' AND manager_name = \'' + str(manager) + '\';'
+    print(sql)
     cursor.execute(sql)
     conn.commit()
     result = cursor.fetchone()

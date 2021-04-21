@@ -23,7 +23,7 @@ def main():
         time_now = datetime.now().time().hour
         check_insert_today_date = database.select_database_date(today)
         list_send_user = [604377972, 391851986, 329710371, 49286688]
-
+        print(list_send_user)
         if int(time_now) == 20 and check_insert_today_date is None: #додати перевірку на відправлене повідомлення в цей день
             #data
             firini_total_sum = int(database.select_all_data('Firini'))
@@ -38,7 +38,7 @@ def main():
             
             message_all_data = '*Загальний звіт за ' + str(datetime.now().date()) + '*\n\n\n' + \
                 'Оборот DecArt: {0}\nОборот Firini: {1}\n\nСередній чек DecArt: {2}\nСередній чек Firini: {3}'.format(
-                    int(decart_total_sum), int(firini_total_sum), int(firini_s_check), int(decart_s_check))
+                    int(decart_total_sum), int(firini_total_sum), int(decart_s_check), int(firini_s_check))
 
             message_to_manager = '*Звіт по менеджерах за '  + str(datetime.now().date()) + '*\n\n\n*DecArt*\n'
 
@@ -68,6 +68,7 @@ def main():
             message_to_manager += '\n\n\n*Firini*\n'
 
             for manager_firini in manager_list_firini:
+                print(manager_firini)
                 try:
                     manager_original_name = database.get_manager_original_name(manager_firini)
                     manager_count_order = database.get_manager_count_order(manager_firini)
@@ -81,6 +82,7 @@ def main():
                 except:
                     continue
             
+            print(message_to_manager)
             for user in list_send_user:
                 bot.send_message(user, message_to_manager, parse_mode='Markdown', reply_markup=menu)
             database.insert_date_notification()
