@@ -29,7 +29,8 @@ def select_quantity_records(store):
         return result[0]
 
 def select_manager_list(store):
-    sql = 'select login_m from manager_password where departament = \'{0}\' and user_group = \'manager\';'.format(store)
+    now_date = str(datetime.now().date())
+    sql = 'select distinct manager_name from manager_web_history where store = \'{0}\' and date = \'{1}\';'.format(store, now_date)
     cursor.execute(sql)
     conn.commit()
     result = cursor.fetchall()
